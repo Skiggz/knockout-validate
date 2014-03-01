@@ -181,3 +181,13 @@ test('Callbacks firing appropriately with pattern matching', 12, function() {
 	strictEqual(always, 4, "Should have made another always callback");
 	strictEqual(fail, 2, "Should have made another fail callback");
 });
+
+module('General');
+
+test('Normal observables have isValidateable property', function() {
+	// This property ensures that we do not call validation (which fires callbacks)
+	var observable = ko.observable('foo');
+	var validated = ko.validate.observable('foo');
+	strictEqual(observable.hasOwnProperty('isValidateable'), false, 'Normal observable should not have isValidateable property');
+	strictEqual(validated.hasOwnProperty('isValidateable'), true, 'Validatable observable should have isValidateable property');
+});

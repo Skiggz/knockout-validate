@@ -112,12 +112,16 @@ ko.validate.observable = function(defaultValue, validationSpec) {
 		to add validation logic
 	*/
 	ko.observable['fn']['equalityComparer'] = function(originalValue, newValue) {
+		var koEquality = ko.validate.originalEqualityComparer(originalValue, newValue);
+		if (!this.hasOwnProperty('isValidateable')) {
+			return koEquality;
+		}
 		/*
 			The default workflow of knockout first checks to see
 			if the value has changed all. If it has not changed,
 			we don't need to worry about doing any validation.
 		*/
-		if (ko.validate.originalEqualityComparer(originalValue, newValue)) {
+		if (koEquality) {
 			return true;
 		}
 		/*
@@ -138,7 +142,7 @@ ko.validate.observable = function(defaultValue, validationSpec) {
 	};
 
 	var _ob = ko.observable(defaultValue);
-
+	_ob.isValidateable = true;
 	/*
 		In case you prefer method chaining to
 		setup validator
