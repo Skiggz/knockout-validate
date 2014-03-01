@@ -4,6 +4,8 @@
 
 Make sure to check out [Knockout's Home Page](http://knockoutjs.com/index.html)!
 
+After you check out the docs, see the [Demo!](http://skiggz.github.io/knockout-validate/)
+
 ----
 
 ###Installation / Include 
