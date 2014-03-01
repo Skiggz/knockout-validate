@@ -1,14 +1,22 @@
-module("Pattern Matching");
+module('Pattern Matching');
 
 /*
 	The idea for pattern matching is that you can pass
 	a pattern to the observable and it will
 	validate the content on that pattern.
+
+	Remember regex's only work for strings!
 */
-test("Should test that pattern matching works", function() {
-	var cats = ko.observable(0);
-	cats(5);
-	strictEqual(cats(), 5, "Cats should be set to 5 via observable");
+
+test('Pattern matching does simple pattern validation', 3, function() {
+	// Create a validated observable for word chars + spaces and no digits 
+	var name = ko.validate.observable('bob', /^[A-Za-z ]+$/);
+	name('10');
+	strictEqual(name(), 'bob', 'Name should not be able to change to 10');
+	name('i love code');
+	strictEqual(name(), 'i love code', 'Sentence should pass pattern validation')
+	name(555);
+	strictEqual(name(), 'i love code', 'Non strings should not validate');
 });
 
 /*
@@ -17,8 +25,16 @@ test("Should test that pattern matching works", function() {
 	change, otherwise it sets the valud equal to 
 	the value returned.
 */
-module("Function validation");
-
+module('Function validation');
+test('Non empty validation function works', 2, function() {
+	var neverEmpty = ko.validate.observable('foo', function(val) {
+		return val ? true : false;
+	});
+	neverEmpty('bar');
+	strictEqual(neverEmpty(), 'bar', 'Should be able to change value to "bar".');
+	neverEmpty('');
+	strictEqual(neverEmpty(), 'bar', 'Should stay at "bar" since we passed in empty string');
+});
 
 /*
 	Object validation is the ability to
@@ -30,40 +46,138 @@ module("Function validation");
 	in as a member of the object
 
 */
-module("Object validation");
+module('Object validation');
 
-/*
-	Test that all of our different ways of
-	creating a validated observable
-	actually do what we expect.
-
-	// Single pattern matching
-	var money = ko.validateObservable(defaultValue, /\$.+/);
-
-	// Function validation
-	var money = ko.validateObservable(defaultValue, function(val) {
-		if (val) return true;
-		return false;
+test('Object validation setup works with pattern', 3, function() {
+	var wordCharsOnly = ko.validate.observable('foo', {
+		pattern: /^\w+$/
 	});
+	strictEqual(wordCharsOnly(), 'foo', 'Should be initial value');
+	wordCharsOnly('####');
+	strictEqual(wordCharsOnly(), 'foo', 'Should not accept non word chars');
+	wordCharsOnly('hi_there');
+	strictEqual(wordCharsOnly(), 'hi_there', 'Should accept word characters');
+});
 
-	// Method chaining for event callbacks
-	var fn = function(val) { console.log(val); };
-	var money = ko.validateObservable(defaultValue, /\$.+/)
-		.onSuccess(fn)
-		.onFail(fn)
-		.onAlways(fn);
-
-	// Object validation, best way to isolate/reuse validation logic
-	var validator = {
-		success: function() {},
-		fail: function() {},
-		always: function() {},
-		pattern: /.+/,
-		validate: function(val) {
-			return true;
+test('Object validation setup works with pattern and function', 4, function() {
+	var wordsLongerThan5 = ko.validate.observable('foobar', {
+		pattern: /^[\w ]+$/,
+		validate: function(value) {
+			// String should be 5 characters long at minimum
+			return typeof value === 'string' && value && value.length > 5;
 		}
-	};
-	var money = ko.validateObservable(defaultValue, validator);
+	});
+	strictEqual(wordsLongerThan5(), 'foobar', 'Should be initial value');
+	wordsLongerThan5('foo');
+	strictEqual(wordsLongerThan5(), 'foobar', 'Word "foo" is too short');
+	wordsLongerThan5('####');
+	strictEqual(wordsLongerThan5(), 'foobar', 'Should not accept non word chars');
+	wordsLongerThan5('the bird is the word');
+	strictEqual(wordsLongerThan5(), 'the bird is the word', 'Should accept a string longer than 5 characters in length');
+});
 
-*/
-module("Syntax");
+module('Callback logic');
+
+test('Callbacks firing appropriately', 12, function() {
+	var success = 0;
+	var fail = 0;
+	var always = 0;
+	var callbackTest = ko.validate.observable('foobar', {
+		validate: function(value) {
+			return value !== null;
+		},
+		success: function(value) {
+			success += 1;
+		},
+		fail: function(value) {
+			fail += 1;
+		},
+		always: function(value) {
+			always += 1;
+		}
+	});
+	callbackTest('foo');
+	strictEqual(success, 1, "Should have made one success callback");
+	strictEqual(always, 1, "Should have made one always callback");
+	strictEqual(fail, 0, "Should not have made one fail callback");
+	callbackTest('bar');
+	strictEqual(success, 2, "Should have made another success callback");
+	strictEqual(always, 2, "Should have made another always callback");
+	strictEqual(fail, 0, "Should not have made one fail callback");
+	callbackTest(null);
+	strictEqual(success, 2, "Should not have made another success callback");
+	strictEqual(always, 3, "Should have made another always callback");
+	strictEqual(fail, 1, "Should have made a fail callback");
+	callbackTest(null);
+	strictEqual(success, 2, "Should not have made another success callback");
+	strictEqual(always, 4, "Should have made another always callback");
+	strictEqual(fail, 2, "Should have made another fail callback");
+});
+
+test('Callbacks firing appropriately after being setup with chaining', 12, function() {
+	var success = 0;
+	var fail = 0;
+	var always = 0;
+	var callbackTest = ko.validate.observable('foobar')
+		.validate(function(value) {
+			return value !== null;
+		})
+		.success(function(value) {
+			success += 1;
+		})
+		.fail(function(value) {
+			fail += 1;
+		})
+		.always(function(value) {
+			always += 1;
+		});
+	callbackTest('foo');
+	strictEqual(success, 1, "Should have made one success callback");
+	strictEqual(always, 1, "Should have made one always callback");
+	strictEqual(fail, 0, "Should not have made one fail callback");
+	callbackTest('bar');
+	strictEqual(success, 2, "Should have made another success callback");
+	strictEqual(always, 2, "Should have made another always callback");
+	strictEqual(fail, 0, "Should not have made one fail callback");
+	callbackTest(null);
+	strictEqual(success, 2, "Should not have made another success callback");
+	strictEqual(always, 3, "Should have made another always callback");
+	strictEqual(fail, 1, "Should have made a fail callback");
+	callbackTest(null);
+	strictEqual(success, 2, "Should not have made another success callback");
+	strictEqual(always, 4, "Should have made another always callback");
+	strictEqual(fail, 2, "Should have made another fail callback");
+});
+
+test('Callbacks firing appropriately with pattern matching', 12, function() {
+	var success = 0;
+	var fail = 0;
+	var always = 0;
+	var callbackTest = ko.validate.observable('foobar')
+		.pattern(/^[a-z]+$/)
+		.success(function(value) {
+			success += 1;
+		})
+		.fail(function(value) {
+			fail += 1;
+		})
+		.always(function(value) {
+			always += 1;
+		});
+	callbackTest('foo');
+	strictEqual(success, 1, "Should have made one success callback");
+	strictEqual(always, 1, "Should have made one always callback");
+	strictEqual(fail, 0, "Should not have made one fail callback");
+	callbackTest('bar');
+	strictEqual(success, 2, "Should have made another success callback");
+	strictEqual(always, 2, "Should have made another always callback");
+	strictEqual(fail, 0, "Should not have made one fail callback");
+	callbackTest('555');
+	strictEqual(success, 2, "Should not have made another success callback");
+	strictEqual(always, 3, "Should have made another always callback");
+	strictEqual(fail, 1, "Should have made a fail callback");
+	callbackTest(null);
+	strictEqual(success, 2, "Should not have made another success callback");
+	strictEqual(always, 4, "Should have made another always callback");
+	strictEqual(fail, 2, "Should have made another fail callback");
+});
