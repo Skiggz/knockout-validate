@@ -66,33 +66,28 @@
 					up the observables, so ignore the lack of consistency
 				*/
 				this.email = ko.validate.observable('', /^[\w\.]+@[\w\.]+\.[a-zA-Z0-9]+$/)
-					.fail(function(value) {
-						self.validEmail(false);
-					})
-					.success(function(value) {
-						self.validEmail(true);
-					});
+					.flag(self.validEmail)
+	                .fail(function(value) {
+	                /*
+	                     A demonstration handler for fail callbacks.
+	                     If both the email is set to "foobar",
+	                     we'll make sure you know with an alert modal :)
+	                 */
+	                if (value === 'trickster') {
+	                    alert('You trickster!');
+	                }
+                    });
 				this.password = ko.validate.observable('', {
 					validate: function(value) {
 						return typeof value === 'string' && value && value.length > 7;
 					},
-					success: function(value) {
-						self.validPassword(true);
-					},
-					fail: function(value) {
-						self.validPassword(false);
-					}
+					flag: self.validPassword
 				});
 				this.retypePassword = ko.validate.observable('', {
 					validate: function(value) {
 						return value === self.password();
 					},
-					success: function(value) {
-						self.passwordsMatch(true);
-					},
-					fail: function(value) {
-						self.passwordsMatch(false);
-					}
+					flag: self.passwordsMatch
 				});
 
 				// DRY extraction of password match messaging
@@ -132,7 +127,7 @@
 				document.removeEventListener( "DOMContentLoaded", applyBindings, false );
 				// Make the JS pre tag pretty using https://code.google.com/p/google-code-prettify/
 				prettyPrint();
-			}
+			};
 			document.addEventListener("DOMContentLoaded", applyBindings, false);
 		</script>
 	</head>
@@ -189,8 +184,9 @@
 				<ul>
 					<li><a href="https://github.com/Skiggz/knockout-validate" target="_blank">Knockout validate</a> allows you to add any kind of validation logic to your observables.</li>
 					<li>This is one of the simplest examples, using knockout validate to do form validation.</li>
-					<li>When the validation logic fails, the <code>fail</code> callback on the validated observable is called, updating the UI with error messaging by changing other observables.</li>
-					<li>When validation succeeds, the <code>success</code> callback tells the form to be happier, also by changing other observables.</li>
+					<li>When the validation logic fails or succeeds, the <code>flag</code> set on the validated observable is updated, in turn updating the UI.</li>
+                    <li>Along with the <code>flag</code> settings, <code>fail</code> and <code>success</code> callbacks also trigger.</li>
+                    <li>To demonstrate the <code>fail</code> handler, look at the email observable setup, and try writing <code>"trickster"</code> in the <code>email field</code></li>
 					<li>
 						It's very easy to <a href="https://github.com/Skiggz/knockout-validate" target="_blank">setup observables with validation.</a>
 					</li>
