@@ -23,9 +23,8 @@
         } catch (e) {
             throw new Error('KNOCKOUT_VALIDATE_REQUIRE was set, and knockout-validate tried to use it as the knockout require name and failed miserably :(', e);
         }
-        define('knockout-validate', [knockoutReferenceName], function(ko) {
-            initializeKnockoutValidate(ko, true);
-            return ko;
+        define([knockoutReferenceName], function(ko) {
+            return initializeKnockoutValidate(ko, true);
         });
     } else {
         /*
@@ -284,6 +283,8 @@
 
             return _ob;
         };
+
+        return validate;
     }
 
 })(this);
