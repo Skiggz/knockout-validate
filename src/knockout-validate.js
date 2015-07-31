@@ -18,6 +18,11 @@ ko.validate.Validator = function(validationSpec) {
 
 	// Callback logic for post validation
 	this.doValidationCallbacks = function(valid, value) {
+        if (v.flag && ko.isObservable(v.flag)) {
+            v.flag(valid);
+        } else {
+            v.flag = valid;
+        }
 		if (valid && v.success && typeof v.success === 'function') {
 			v.success(value);
 		}
@@ -27,11 +32,6 @@ ko.validate.Validator = function(validationSpec) {
 		if (v.always && typeof v.always === 'function') {
 			v.always(value);
 		}
-        if (v.flag && ko.isObservable(v.flag)) {
-            v.flag(valid);
-        } else {
-            v.flag = valid;
-        }
 	};
 	/*
 		If a pattern is present for string value

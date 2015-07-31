@@ -78,6 +78,35 @@ test('Setting flag via options', 6, function() {
     strictEqual(valid(), true, 'Valid flag was set to true now that valid input was given');
 });
 
+test('Flags should be set before firing handlers', 16, function() {
+    var valid = ko.observable(true);
+    var anySetValue = ko.validate.observable('foo', function(val) {
+        return val ? true : false;
+    })
+        .flag(valid)
+        .success(function() {
+          strictEqual(valid(), true, 'Valid flag was set to true before success callback');
+        })
+        .fail(function() {
+            strictEqual(valid(), false, 'Valid flag was set to false before fail callback');
+        })
+        .always(function(value) {
+            equal(!!valid(), !!value, 'Valid flag was set before always callback');
+        });
+    anySetValue('');
+    strictEqual(valid(), false, 'Valid flag should now be false');
+    strictEqual(anySetValue(), 'foo', 'Validated observable should still be "foo"');
+    anySetValue('bar');
+    strictEqual(anySetValue(), 'bar', 'Should stay "bar"');
+    strictEqual(valid(), true, 'Valid flag was set to true');
+    anySetValue('');
+    strictEqual(valid(), false, 'Valid flag should now be false');
+    strictEqual(anySetValue(), 'bar', 'Validated observable should still be "bar"');
+    anySetValue('baz');
+    strictEqual(anySetValue(), 'baz', 'Should become "baz"');
+    strictEqual(valid(), true, 'Valid flag was set to true now that valid input was given');
+});
+
 /*
 	Object validation is the ability to
 	pass in an object with defined methods
