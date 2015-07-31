@@ -215,6 +215,7 @@ var name = kov.observable("First Name")
 ###Tests
 
 * Tests are written and ran with QUnit separately in browser.
-* Navigate your browser to `file:///{path to the codez}/knockout-validate/test/knockout-validate-test.html` to run.
+* Run `bower install`
+* Navigate your browser to the file `/test/knockout-validate-test.html` to run.
 
-Make sure to check out [QUnit's Home Page](https://qunitjs.com/)!
+And make sure to check out [QUnit's Home Page](https://qunitjs.com/)!
