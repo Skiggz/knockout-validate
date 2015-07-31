@@ -1,0 +1,25 @@
+{
+  "name": "knockout-validate",
+  "version": "0.1.0",
+  "homepage": "http://skiggz.github.io/knockout-validate/",
+  "authors": [
+    "Skylar Lowery <skylar.lowery21@gmail.com>"
+  ],
+  "description": "Validate knockout observables with ease",
+  "main": "src/knockout-validate.js",
+  "keywords": [
+    "knockout",
+    "validate",
+    "observables",
+    "validation",
+    "observable",
+    "strict",
+    "type",
+    "check",
+    "checking"
+  ],
+  "dependencies": {
+    "knockout": "~3.3.0"
+  },
+  "license": "MIT"
+}
