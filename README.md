@@ -14,7 +14,7 @@ After you check out the docs, see the [Demo!](http://skiggz.github.io/knockout-v
 * The latest version is intended for 3.3.0 if you choose to install via bower.
 
 #####Installing with bower
-```html
+```
 bower install knockout-validate
 ```
 
@@ -26,6 +26,32 @@ bower install knockout-validate
 <script type="text/javascript" src="knockout-validate.js"></script> 
 ```
 ----
+
+###Setup
+
+#####Old School
+
+* If you have knockout set as a global reference (`ko`) then just include knockout-validate.js
+
+```
+ko.validate ? console.log('Ready for action') : ' console.log('KO Validate not found :(');
+```
+
+#####AMD (require.js)
+
+* You can include the knockout-validate module in one of two ways
+  1. You can set a path via require.js config for knockout named `knockout` and you're done
+  2. If you find step 1 annoying, you can set a global variable `KNOCKOUT_VALIDATE_REQUIRE` to the name of your knockout module. Feel free to delete it once ko-validate module is created.
+
+```javascript
+KNOCKOUT_VALIDATE_REQUIRE = '/path/name/for/knockoutjs';
+require(['knockout-validate'], function(ko) { 
+    var foo = ko.observable('hi', /^[a-z]+$/); // notice the direct usage
+});
+
+```
+----
+
 
 ###Usage
 
