@@ -54,7 +54,7 @@
             root.kov = validate;
         }
 
-        validate.Validator = function(validationSpec) {
+        function Validator(validationSpec) {
             var v = this;
             this.success = null;
             this.fail = null;
@@ -172,7 +172,7 @@
 
         validate.observable = function(defaultValue, validationSpec) {
             // init validator
-            var validator = new validate.Validator(validationSpec);
+            var validator = new Validator(validationSpec);
             var _ob = ko.observable(defaultValue);
             var originalEquality = _ob['equalityComparer'];
             /*
