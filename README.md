@@ -34,7 +34,7 @@ bower install knockout-validate
 * If you have knockout set as a global reference (`ko`) then just include knockout-validate.js
 
 ```
-kov ? console.log('Ready for action') : ' console.log('KO Validate not found :(');
+kov ? console.log('Ready for action') : console.log('KO Validate not found :(');
 ```
 
 #####AMD (require.js)
