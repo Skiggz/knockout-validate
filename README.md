@@ -10,13 +10,18 @@ After you check out the docs, see the [Demo!](http://skiggz.github.io/knockout-v
 
 ###Installation / Include 
 
-* I have currently implemented and tested this with version 3.0.0 of knockout.js
-* I am not 100% sure how well it works with previous/future versions.
-* I will continue to test and update this with more version support info.
+* Currently knockout versions 3.0.0 and 3.3.0 have been tested for support
+* The latest version is intended for 3.3.0 if you choose to install via bower.
 
+#####Installing with bower
+```html
+bower install knockout-validate
+```
+
+#####Installing manually
 ```html
 <!-- Include knockout first (ko) -->
-<script type="text/javascript" src="knockout-3.0.0.js"></script>
+<script type="text/javascript" src="knockout-3.3.0.js"></script>
 <!-- Then include knockout-validate -->
 <script type="text/javascript" src="knockout-validate.js"></script> 
 ```
