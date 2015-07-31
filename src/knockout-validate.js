@@ -117,11 +117,12 @@ ko.validate.Validator = function(validationSpec) {
 ko.validate.observable = function(defaultValue, validationSpec) {
 	// init validator
 	var validator = new ko.validate.Validator(validationSpec);
+    var _ob = ko.observable(defaultValue);
 	/*
 		Override equality comparer at this point
 		to add validation logic
 	*/
-	ko.observable['fn']['equalityComparer'] = function(originalValue, newValue) {
+    _ob['equalityComparer'] = function(originalValue, newValue) {
 		var koEquality = ko.validate.originalEqualityComparer(originalValue, newValue);
 		if (!this.hasOwnProperty('isValidateable')) {
 			return koEquality;
@@ -151,7 +152,6 @@ ko.validate.observable = function(defaultValue, validationSpec) {
 		return !valid;
 	};
 
-	var _ob = ko.observable(defaultValue);
 	_ob.isValidateable = true;
 	/*
 		In case you prefer method chaining to

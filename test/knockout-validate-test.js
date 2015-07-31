@@ -233,3 +233,12 @@ test('Normal observables have isValidateable property', function() {
 	strictEqual(observable.hasOwnProperty('isValidateable'), false, 'Normal observable should not have isValidateable property');
 	strictEqual(validated.hasOwnProperty('isValidateable'), true, 'Validatable observable should have isValidateable property');
 });
+
+
+module('Pollution');
+
+test('Test that we are not overriding the global observable comparison function (doh)', function() {
+	var observable = ko.observable('foo');
+	var validated = ko.validate.observable('foo');
+	notStrictEqual(observable['equalityComparer'], validated['equalityComparer'], 'We should not override the global ko equalityComparer fn');
+});
