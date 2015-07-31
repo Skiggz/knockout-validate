@@ -45,7 +45,7 @@
 			}
 		</style>
 		<script type="text/javascript">
-			ko.validate.Demo = function() {
+			var Demo = function() {
 				var self = this;
 
 				// We can use knockout-validate to ensure our flags are all booleans
@@ -54,9 +54,9 @@
 				};
 
 				// Valid flags for UI
-				this.validEmail = ko.validate.observable(true, validBoolean);
-				this.validPassword = ko.validate.observable(true, validBoolean);
-				this.passwordsMatch = ko.validate.observable(true, validBoolean);
+				this.validEmail = kov.observable(true, validBoolean);
+				this.validPassword = kov.observable(true, validBoolean);
+				this.passwordsMatch = kov.observable(true, validBoolean);
 
 				/*
 					A somewhat basic email regex. Not fool-proof
@@ -65,7 +65,7 @@
 					I've tried to demonstrate various ways of setting
 					up the observables, so ignore the lack of consistency
 				*/
-				this.email = ko.validate.observable('', /^[\w\.]+@[\w\.]+\.[a-zA-Z0-9]+$/)
+				this.email = kov.observable('', /^[\w\.]+@[\w\.]+\.[a-zA-Z0-9]+$/)
 					.flag(self.validEmail)
 	                .fail(function(value) {
 	                /*
@@ -77,13 +77,13 @@
 	                    alert('You trickster!');
 	                }
                     });
-				this.password = ko.validate.observable('', {
+				this.password = kov.observable('', {
 					validate: function(value) {
 						return typeof value === 'string' && value && value.length > 7;
 					},
 					flag: self.validPassword
 				});
-				this.retypePassword = ko.validate.observable('', {
+				this.retypePassword = kov.observable('', {
 					validate: function(value) {
 						return value === self.password();
 					},
@@ -116,12 +116,12 @@
 				// Helper to display the code directly. Not intended to be too fancy
 				this.codeDisplay = ko.observable(
 					// replace tabs with spaces for readability
-					ko.validate.Demo.toString()
+					Demo.toString()
 						.replace(/\n\t{3}/g, '\n')
 						.replace(/\t/g, '   ') 
 				);
 			};
-			var demo = new ko.validate.Demo();
+			var demo = new Demo();
 			var applyBindings = function() {
 				ko.applyBindings(demo);
 				document.removeEventListener( "DOMContentLoaded", applyBindings, false );
@@ -183,7 +183,7 @@
 				<h1>An Overview:</h1>
 				<ul>
 					<li><a href="https://github.com/Skiggz/knockout-validate" target="_blank">Knockout validate</a> allows you to add any kind of validation logic to your observables.</li>
-					<li>This is one of the simplest examples, using knockout validate to do form validation.</li>
+                    <li>This is one of the simplest examples, using knockout validate to do form validation.</li>
 					<li>When the validation logic fails or succeeds, the <code>flag</code> set on the validated observable is updated, in turn updating the UI.</li>
                     <li>Along with the <code>flag</code> settings, <code>fail</code> and <code>success</code> callbacks also trigger.</li>
                     <li>To demonstrate the <code>fail</code> handler, look at the email observable setup, and try writing <code>"trickster"</code> in the <code>email field</code></li>
@@ -199,6 +199,7 @@
 			</section>
 			<section class="container">
 				<h1>The Code</h1>
+                <p>This particular example uses the <code>global namespace</code> and by default is named <code>kov</code> to mimic <code>ko</code>. See the README on how to use with require.js</p>
 				<article class="container">
 					<pre class="prettyprint" data-bind="html: codeDisplay">
 					</pre>
