@@ -101,7 +101,7 @@ ko.validate.Validator = function(validationSpec) {
 	};
 	if (validationSpec) {
 		this.updateSpec(validationSpec);
-	};
+	}
 };
 
 ko.validate.observable = function(defaultValue, validationSpec) {
