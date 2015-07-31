@@ -53,6 +53,7 @@ var name = ko.validate.observable("First Name", function(value) {
 * Passing in a validation object.
 * All of the keys in the validator object are optional!
 ```javascript
+var myValidCheckingObservable = ko.observable(false);
 var validator = {
 	success: function(value) {
 		myViewModel.isValid(true);
@@ -60,6 +61,7 @@ var validator = {
 	fail: function(value) {
 		myViewModel.isValid(false);
 	},
+	flag: myValidCheckingObservable,
 	always: function(value) {
 		myViewModel.attempts(myViewModel.attempts() + 1);
 	},
@@ -82,6 +84,7 @@ var name = ko.validate.observable("First Name", validator);
 
 * Purely with method chaining
 ```javascript
+var myValidCheckingObservable = ko.observable(false);
 var name = ko.validate.observable("First Name")
 	.success(function(value) {
 		myViewModel.isValid(true);
@@ -92,6 +95,7 @@ var name = ko.validate.observable("First Name")
 	.always(function(value) {
 		myViewModel.attempts(myViewModel.attempts() + 1);
 	})
+	.flag(myValidCheckingObservable)
 	.pattern(/^\w+$/)
 	.validate(function(value) {
 		return value !== null && value !== undefined;
@@ -163,6 +167,11 @@ var name = ko.validate.observable("First Name")
 >   Keep in mind, this will not represent the state
 >   of the observable, the observable will always
 >   stay in a valid state.
+>   
+>   Also note that these flags are updated before
+>   any of the handlers are triggered, so you can
+>   check other observables validity in your
+>   handlers.
 >   
 >   A great example usage is form fills. Check out
 >   the demo page, see how the flag setting is
