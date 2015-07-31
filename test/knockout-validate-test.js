@@ -10,7 +10,7 @@ module('Pattern Matching');
 
 test('Pattern matching does simple pattern validation', 3, function() {
 	// Create a validated observable for word chars + spaces and no digits 
-	var name = ko.validate.observable('bob', /^[A-Za-z ]+$/);
+	var name = kov.observable('bob', /^[A-Za-z ]+$/);
 	name('10');
 	strictEqual(name(), 'bob', 'Name should not be able to change to 10');
 	name('i love code');
@@ -27,7 +27,7 @@ test('Pattern matching does simple pattern validation', 3, function() {
 */
 module('Function validation');
 test('Non empty validation function works', 2, function() {
-	var neverEmpty = ko.validate.observable('foo', function(val) {
+	var neverEmpty = kov.observable('foo', function(val) {
 		return val ? true : false;
 	});
 	neverEmpty('bar');
@@ -45,7 +45,7 @@ module('Flag validation');
 
 test('Setting flag via method', 6, function() {
     var valid = ko.observable(true);
-    var anySetValue = ko.validate.observable('foo', function(val) {
+    var anySetValue = kov.observable('foo', function(val) {
         return val ? true : false;
     }).flag(valid);
     anySetValue('bar');
@@ -61,7 +61,7 @@ test('Setting flag via method', 6, function() {
 
 test('Setting flag via options', 6, function() {
     var valid = ko.observable(true);
-    var anySetValue = ko.validate.observable('foo', {
+    var anySetValue = kov.observable('foo', {
         validate: function(val) {
             return val ? true : false;
         },
@@ -80,7 +80,7 @@ test('Setting flag via options', 6, function() {
 
 test('Flags should be set before firing handlers', 16, function() {
     var valid = ko.observable(true);
-    var anySetValue = ko.validate.observable('foo', function(val) {
+    var anySetValue = kov.observable('foo', function(val) {
         return val ? true : false;
     })
         .flag(valid)
@@ -120,7 +120,7 @@ test('Flags should be set before firing handlers', 16, function() {
 module('Object validation');
 
 test('Object validation setup works with pattern', 3, function() {
-	var wordCharsOnly = ko.validate.observable('foo', {
+	var wordCharsOnly = kov.observable('foo', {
 		pattern: /^\w+$/
 	});
 	strictEqual(wordCharsOnly(), 'foo', 'Should be initial value');
@@ -131,7 +131,7 @@ test('Object validation setup works with pattern', 3, function() {
 });
 
 test('Object validation setup works with pattern and function', 4, function() {
-	var wordsLongerThan5 = ko.validate.observable('foobar', {
+	var wordsLongerThan5 = kov.observable('foobar', {
 		pattern: /^[\w ]+$/,
 		validate: function(value) {
 			// String should be 5 characters long at minimum
@@ -153,7 +153,7 @@ test('Callbacks firing appropriately', 12, function() {
 	var success = 0;
 	var fail = 0;
 	var always = 0;
-	var callbackTest = ko.validate.observable('foobar', {
+	var callbackTest = kov.observable('foobar', {
 		validate: function(value) {
 			return value !== null;
 		},
@@ -189,7 +189,7 @@ test('Callbacks firing appropriately after being setup with chaining', 12, funct
 	var success = 0;
 	var fail = 0;
 	var always = 0;
-	var callbackTest = ko.validate.observable('foobar')
+	var callbackTest = kov.observable('foobar')
 		.validate(function(value) {
 			return value !== null;
 		})
@@ -224,7 +224,7 @@ test('Callbacks firing appropriately with pattern matching', 12, function() {
 	var success = 0;
 	var fail = 0;
 	var always = 0;
-	var callbackTest = ko.validate.observable('foobar')
+	var callbackTest = kov.observable('foobar')
 		.pattern(/^[a-z]+$/)
 		.success(function(value) {
 			success += 1;
@@ -258,7 +258,7 @@ module('General');
 test('Normal observables have isValidateable property', function() {
 	// This property ensures that we do not call validation (which fires callbacks)
 	var observable = ko.observable('foo');
-	var validated = ko.validate.observable('foo');
+	var validated = kov.observable('foo');
 	strictEqual(observable.hasOwnProperty('isValidateable'), false, 'Normal observable should not have isValidateable property');
 	strictEqual(validated.hasOwnProperty('isValidateable'), true, 'Validatable observable should have isValidateable property');
 });
@@ -267,7 +267,7 @@ module('Pollution');
 
 test('Test that we are not overriding the global observable comparison function (doh)', function() {
 	var observable = ko.observable('foo');
-	var validated = ko.validate.observable('foo');
+	var validated = kov.observable('foo');
 	notStrictEqual(observable['equalityComparer'], validated['equalityComparer'], 'We should not override the global ko equalityComparer fn');
 });
 
@@ -277,7 +277,7 @@ test('Test that dispose calls are made when observable is dispose manually', 2, 
 	var disposable = ko.computed(function() {
         ok(true, 'called');
     });
-    var validated = ko.validate.observable('foo',  /^[a-z]+$/)
+    var validated = kov.observable('foo',  /^[a-z]+$/)
         .flag(disposable);
 	ok(validated.dispose, 'validated observable has dispose method');
     validated.dispose();

@@ -1,4 +1,4 @@
-(function() {
+(function(root) {
     /***** Knockout Validate (https://github.com/Skiggz/knockout-validate)
      **** Skylar Lowery (https://github.com/Skiggz)
      *** A Knockout plugin/adapter (http://knockoutjs.com/)
@@ -24,7 +24,7 @@
             throw new Error('KNOCKOUT_VALIDATE_REQUIRE was set, and knockout-validate tried to use it as the knockout require name and failed miserably :(', e);
         }
         define('knockout-validate', [knockoutReferenceName], function(ko) {
-            initializeKnockoutValidate(ko);
+            initializeKnockoutValidate(ko, true);
             return ko;
         });
     } else {
@@ -35,11 +35,26 @@
         initializeKnockoutValidate(ko);
     }
 
-    function initializeKnockoutValidate(ko) {
-        ko.validate = {};
-        ko.validate.originalEqualityComparer = ko.observable().equalityComparer;
+    function initializeKnockoutValidate(ko, moduleDefinition) {
 
-        ko.validate.Validator = function(validationSpec) {
+        var original = root.kov;
+        var validate = {};
+
+        /*
+        * Just like underscore's noConflict method,
+        * returns the original validate object
+        * and returns this one.
+        * */
+        validate.noConflict = function() {
+            root.kov = original;
+            return validate;
+        };
+
+        if (!moduleDefinition) {
+            root.kov = validate;
+        }
+
+        validate.Validator = function(validationSpec) {
             var v = this;
             this.success = null;
             this.fail = null;
@@ -155,16 +170,17 @@
             }
         };
 
-        ko.validate.observable = function(defaultValue, validationSpec) {
+        validate.observable = function(defaultValue, validationSpec) {
             // init validator
-            var validator = new ko.validate.Validator(validationSpec);
+            var validator = new validate.Validator(validationSpec);
             var _ob = ko.observable(defaultValue);
+            var originalEquality = _ob['equalityComparer'];
             /*
              Override equality comparer at this point
              to add validation logic
              */
             _ob['equalityComparer'] = function(originalValue, newValue) {
-                var koEquality = ko.validate.originalEqualityComparer(originalValue, newValue);
+                var koEquality = originalEquality(originalValue, newValue);
                 if (!this.hasOwnProperty('isValidateable')) {
                     return koEquality;
                 }
@@ -270,4 +286,4 @@
         };
     }
 
-})();
+})(this);
