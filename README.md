@@ -152,6 +152,17 @@ var name = ko.validate.observable("First Name")
 >	if you want, but make sure the pattern
 >	option is not set.
 		
+* **flag** Optionally set a flag for the observable to update
+> 	It is common to want to update a UI or other observables
+>   when your validated observable state changes. This
+>   could be an `error` observable that binds css to your
+>   main page, or causes a popup to appear etc.. Instead
+>   of adding error callbacks, you can simply include
+>   { ... flag: valid ... } in your options and when
+>   validation happens, valid(validationResult) or 
+>   valid = validationResult will be set by the triggers.
+>   So if success trigger fires, and you set an observable
+>   (or normal variable) it will be set to true (meaning valid)
 
 ----
 

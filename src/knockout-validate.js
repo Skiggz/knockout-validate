@@ -14,6 +14,7 @@ ko.validate.Validator = function(validationSpec) {
 	this.always = null;
 	this.pattern = null;
 	this.validate = null;
+    this.flag = null;
 
 	// Callback logic for post validation
 	this.doValidationCallbacks = function(valid, value) {
@@ -26,6 +27,11 @@ ko.validate.Validator = function(validationSpec) {
 		if (v.always && typeof v.always === 'function') {
 			v.always(value);
 		}
+        if (v.flag && ko.isObservable(v.flag)) {
+            v.flag(valid);
+        } else {
+            v.flag = valid;
+        }
 	};
 	/*
 		If a pattern is present for string value
@@ -96,6 +102,10 @@ ko.validate.Validator = function(validationSpec) {
 			if (spec.hasOwnProperty('validate') &&
 				typeof spec.validate === 'function') {
 				v.validate = spec.validate;
+			}
+			if (spec.hasOwnProperty('flag') &&
+                typeof spec.flag !== 'undefined') {
+				v.flag = spec.flag;
 			}
 		}
 	};
@@ -184,6 +194,18 @@ ko.validate.observable = function(defaultValue, validationSpec) {
 	*/
 	_ob.validate = function(fn) {
 		validator.updateSpec({validate: fn});
+		return _ob;
+	};
+	/*
+		Set validation flag to be updated
+		after each validation
+		ex trigger result:
+		    flag(validationResult);
+        or
+            flag = validationResult;
+	*/
+	_ob.flag = function(observableOrVariable) {
+		validator.updateSpec({flag: observableOrVariable});
 		return _ob;
 	};
 

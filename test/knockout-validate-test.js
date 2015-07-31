@@ -37,6 +37,48 @@ test('Non empty validation function works', 2, function() {
 });
 
 /*
+ Flags should be able to be set via options or method,
+ and the flag should update when callback triggers
+ are made.
+ */
+module('Flag validation');
+
+test('Setting flag via method', 6, function() {
+    var valid = ko.observable(true);
+    var anySetValue = ko.validate.observable('foo', function(val) {
+        return val ? true : false;
+    }).flag(valid);
+    anySetValue('bar');
+    strictEqual(anySetValue(), 'bar', 'Should stay "bar"');
+    strictEqual(valid(), true, 'Valid flag was set to true (or remained true)');
+    anySetValue('');
+    strictEqual(valid(), false, 'Valid flag should now be false');
+    strictEqual(anySetValue(), 'bar', 'Validated observable should still be "bar"');
+    anySetValue('baz');
+    strictEqual(anySetValue(), 'baz', 'Should become "baz"');
+    strictEqual(valid(), true, 'Valid flag was set to true now that valid input was given');
+});
+
+test('Setting flag via options', 6, function() {
+    var valid = ko.observable(true);
+    var anySetValue = ko.validate.observable('foo', {
+        validate: function(val) {
+            return val ? true : false;
+        },
+        flag: valid
+    });
+    anySetValue('bar');
+    strictEqual(anySetValue(), 'bar', 'Should stay "bar"');
+    strictEqual(valid(), true, 'Valid flag was set to true (or remained true)');
+    anySetValue('');
+    strictEqual(valid(), false, 'Valid flag should now be false');
+    strictEqual(anySetValue(), 'bar', 'Validated observable should still be "bar"');
+    anySetValue('baz');
+    strictEqual(anySetValue(), 'baz', 'Should become "baz"');
+    strictEqual(valid(), true, 'Valid flag was set to true now that valid input was given');
+});
+
+/*
 	Object validation is the ability to
 	pass in an object with defined methods
 	for validation and event callbacks
