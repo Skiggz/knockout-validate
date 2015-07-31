@@ -34,7 +34,7 @@ bower install knockout-validate
 * If you have knockout set as a global reference (`ko`) then just include knockout-validate.js
 
 ```
-ko.validate ? console.log('Ready for action') : ' console.log('KO Validate not found :(');
+kov ? console.log('Ready for action') : ' console.log('KO Validate not found :(');
 ```
 
 #####AMD (require.js)
@@ -45,11 +45,15 @@ ko.validate ? console.log('Ready for action') : ' console.log('KO Validate not f
 
 ```javascript
 KNOCKOUT_VALIDATE_REQUIRE = '/path/name/for/knockoutjs';
-require(['knockout-validate'], function(ko) { 
-    var foo = ko.observable('hi', /^[a-z]+$/); // notice the direct usage
+require(['path/to/knockout-validate'], function(ko) { 
+    // notice the direct usage -- the module is passed in as whatever you name it
+    var foo = ko.observable('hi', /^[a-z]+$/);
 });
 
 ```
+
+######Want support for another mechanism of include? Create a PR or post a feature request on github.
+
 ----
 
 
@@ -57,17 +61,18 @@ require(['knockout-validate'], function(ko) {
 
 * Validated observables are used just like normal observables. 
 * There are many ways to set up validated observables.
+* If you use global namespace, knockout-validate creates the `kov` object
 
 #####Here are examples of how to create a validated observable
 
 * Passing in a regex pattern for string values.
 ```javascript
-var name = ko.validate.observable("First Name", /^\w+$/);
+var name = kov.observable("First Name", /^\w+$/);
 ```
 
 * Passing in a function to validate any value.
 ```javascript
-var name = ko.validate.observable("First Name", function(value) {
+var name = kov.observable("First Name", function(value) {
 	/* 
 		This validation method will check to see that
 		any value passed in is not null and not
@@ -105,13 +110,13 @@ var validator = {
 		return value !== null && value !== undefined;
 	}
 };
-var name = ko.validate.observable("First Name", validator);
+var name = kov.observable("First Name", validator);
 ```
 
 * Purely with method chaining
 ```javascript
 var myValidCheckingObservable = ko.observable(false);
-var name = ko.validate.observable("First Name")
+var name = kov.observable("First Name")
 	.success(function(value) {
 		myViewModel.isValid(true);
 	})
