@@ -15,6 +15,15 @@ ko.validate.Validator = function(validationSpec) {
 	this.pattern = null;
 	this.validate = null;
     this.flag = null;
+    this.dispose = function() {
+        var item;
+        for (var key in v) {
+            item = v[key];
+            if (item && item.hasOwnProperty('dispose') && typeof item['dispose'] === 'function') {
+                item.dispose();
+            }
+        }
+    };
 
 	// Callback logic for post validation
 	this.doValidationCallbacks = function(valid, value) {
@@ -151,6 +160,22 @@ ko.validate.observable = function(defaultValue, validationSpec) {
 		*/
 		return !valid;
 	};
+
+    /*
+    * Allows disposal of items created by
+    * knockout-validate
+    * */
+    if (_ob.hasOwnProperty('dispose') && typeof _ob.dispose === 'function') {
+        var d = _ob.dispose;
+        _ob.dispose = function() {
+            d();
+            validator.dispose();
+        };
+    } else {
+        _ob.dispose = function() {
+            validator.dispose();
+        }
+    }
 
 	_ob.isValidateable = true;
 	/*

@@ -263,11 +263,22 @@ test('Normal observables have isValidateable property', function() {
 	strictEqual(validated.hasOwnProperty('isValidateable'), true, 'Validatable observable should have isValidateable property');
 });
 
-
 module('Pollution');
 
 test('Test that we are not overriding the global observable comparison function (doh)', function() {
 	var observable = ko.observable('foo');
 	var validated = ko.validate.observable('foo');
 	notStrictEqual(observable['equalityComparer'], validated['equalityComparer'], 'We should not override the global ko equalityComparer fn');
+});
+
+module('Dispose');
+
+test('Test that dispose calls are made when observable is dispose manually', 2, function() {
+	var disposable = ko.computed(function() {
+        ok(true, 'called');
+    });
+    var validated = ko.validate.observable('foo',  /^[a-z]+$/)
+        .flag(disposable);
+	ok(validated.dispose, 'validated observable has dispose method');
+    validated.dispose();
 });
